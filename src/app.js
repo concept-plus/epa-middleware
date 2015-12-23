@@ -17,18 +17,20 @@ app.use('/relay/uv', function(req, res, next) {
     console.log('querying UV with zipcode ' + zipcode);
 
     var url = 'http://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/' + zipcode + '/JSON';
-    var req = http.get(url, function(response) {
-        // console.log(JSON.stringify(Object.keys(response)));
-        // console.log('status=' + response.statusCode + ', url=' + response.url);
-
-        response.on('data', function(body) {
-            console.log('body = ' + body);
+    console.log('/relay/uv: calling url ' + url);
+    var request = http.get(url, function(response) {
+        var body = '';
+        response.on('data', function(chunk) {
+            console.log('uv chunk = ' + chunk);
+            body += chunk;
+        });
+        response.on('end', function() {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Content-Type', 'application/json');
             res.status(response.statusCode).send(body);
         });
     });
-    req.end();
+    request.end();
 });
 
 app.use('/relay/aqi', function(req, res, next) {
@@ -37,16 +39,20 @@ app.use('/relay/aqi', function(req, res, next) {
     console.log('querying AQI with zipcode ' + zipcode);
 
     var url = 'http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=' + zipcode + '&distance=25&API_KEY=193C637C-1EDD-4F7A-A9FC-618AFF9FFD2D';
-    var req = http.get(url, function(response) {
-        // console.log(JSON.stringify(Object.keys(response)));
-        response.on('data', function(body) {
-            console.log('body = ' + body);
+    console.log('/relay/aqi: calling url ' + url);
+    var request = http.get(url, function(response) {
+        var body = '';
+        response.on('data', function(chunk) {
+            console.log('aqi chunk = ' + chunk);
+            body += chunk;
+        });
+        response.on('end', function() {
             res.header('Access-Control-Allow-Origin', '*');
             res.header('Content-Type', 'application/json');
             res.status(response.statusCode).send(body);
         });
     });
-    req.end();
+    request.end();
 });
 
 var server = app.listen(PORT, function() {
