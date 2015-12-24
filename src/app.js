@@ -1,7 +1,8 @@
 'use strict';
 
 var express = require('express');
-var http = require('http');
+var aqiQueryService = require('./aqi-query-service');
+var uvQueryService = require('./uv-query-service');
 
 var app = express();
 
@@ -10,49 +11,51 @@ var PORT = 8181;
 app.set('x-powered-by', false);
 app.set('Content-Type', 'application/json');
 
+app.use('/relay', function(req, res, next) {
+    var zipcode = req.query.zipcode;
+    if (zipcode === undefined || zipcode === null || zipcode === '') {
+        return res.status(500).send('A zipcode is required');
+    }
+    if (isNaN(parseInt(zipcode))) {
+        return res.status(500).send({ error: 'Invalid zipcode' });
+    }
+    next();
+})
 
 app.use('/relay/uv', function(req, res, next) {
 
     var zipcode = req.query.zipcode;
     console.log('querying UV with zipcode ' + zipcode);
 
-    var url = 'http://iaspub.epa.gov/enviro/efservice/getEnvirofactsUVHOURLY/ZIP/' + zipcode + '/JSON';
-    console.log('/relay/uv: calling url ' + url);
-    var request = http.get(url, function(response) {
-        var body = '';
-        response.on('data', function(chunk) {
-            console.log('uv chunk = ' + chunk);
-            body += chunk;
-        });
-        response.on('end', function() {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Content-Type', 'application/json');
-            res.status(response.statusCode).send(body);
-        });
+    uvQueryService.queryToday(zipcode, function(err, result) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Content-Type', 'application/json');
+        res.status(result.status).send(result.body);
     });
-    request.end();
 });
 
-app.use('/relay/aqi', function(req, res, next) {
+app.use('/relay/aqi-current', function(req, res, next) {
 
     var zipcode = req.query.zipcode;
     console.log('querying AQI with zipcode ' + zipcode);
 
-    var url = 'http://www.airnowapi.org/aq/observation/zipCode/current/?format=application/json&zipCode=' + zipcode + '&distance=25&API_KEY=193C637C-1EDD-4F7A-A9FC-618AFF9FFD2D';
-    console.log('/relay/aqi: calling url ' + url);
-    var request = http.get(url, function(response) {
-        var body = '';
-        response.on('data', function(chunk) {
-            console.log('aqi chunk = ' + chunk);
-            body += chunk;
-        });
-        response.on('end', function() {
-            res.header('Access-Control-Allow-Origin', '*');
-            res.header('Content-Type', 'application/json');
-            res.status(response.statusCode).send(body);
-        });
+    aqiQueryService.queryCurrent(zipcode, function(err, result) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Content-Type', 'application/json');
+        res.status(result.status).send(result.body);
     });
-    request.end();
+});
+
+app.use('/relay/aqi-range', function(req, res, next) {
+
+    var zipcode = req.query.zipcode;
+    console.log('querying AQI range with zipcode ' + zipcode);
+
+    aqiQueryService.queryRange(zipcode, function(err, result) {
+        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Content-Type', 'application/json');
+        res.status(result.status).send(result.body);
+    });
 });
 
 var server = app.listen(PORT, function() {

@@ -3,7 +3,9 @@
   "description": "A node app for relaying requests",
   "author": "Mike Mathis <mmathis@conceptplusllc.com>",
   "dependencies": {
-    "express": ">= 4.13.x"
+    "express": "4.13.3",
+    "async": "1.5.0",
+    "moment": "2.10.6"
   },
   "engine": "node >= 0.10.0"
 }
