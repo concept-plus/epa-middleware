@@ -12,6 +12,8 @@ app.set('x-powered-by', false);
 app.set('Content-Type', 'application/json');
 
 app.use('/relay', function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Content-Type', 'application/json');
     var zipcode = req.query.zipcode;
     if (zipcode === undefined || zipcode === null || zipcode === '') {
         return res.status(500).send('A zipcode is required');
@@ -28,8 +30,6 @@ app.use('/relay/uv', function(req, res, next) {
     console.log('querying UV with zipcode ' + zipcode);
 
     uvQueryService.queryToday(zipcode, function(err, result) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Content-Type', 'application/json');
         res.status(result.status).send(result.body);
     });
 });
@@ -40,8 +40,6 @@ app.use('/relay/aqi-current', function(req, res, next) {
     console.log('querying AQI with zipcode ' + zipcode);
 
     aqiQueryService.queryCurrent(zipcode, function(err, result) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Content-Type', 'application/json');
         res.status(result.status).send(result.body);
     });
 });
@@ -52,8 +50,6 @@ app.use('/relay/aqi-range', function(req, res, next) {
     console.log('querying AQI range with zipcode ' + zipcode);
 
     aqiQueryService.queryRange(zipcode, function(err, result) {
-        res.header('Access-Control-Allow-Origin', '*');
-        res.header('Content-Type', 'application/json');
         res.status(result.status).send(result.body);
     });
 });
