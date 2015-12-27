@@ -38,7 +38,7 @@ function query(service, zipcode, date, callback) {
     var queryParams = [
         'format=application/json',
         'zipCode=' + zipcode,
-        'distance=25',
+        'distance=500',
         'API_KEY=193C637C-1EDD-4F7A-A9FC-618AFF9FFD2D'
     ];
     if (date) {
