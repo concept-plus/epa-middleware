@@ -22,7 +22,7 @@ _See the [GitHub Repository - Front End](https://github.com/concept-plus/EPA-Go.
 
 **Docker**  
   
-_See the [Docker hub registry](https://registry.hub.docker.com/u/conceptplus/epa-rfi/)_
+_See the [Docker hub registry - Middleware Container](https://hub.docker.com/r/conceptplus/epa-middleware/)_
 
 # Running
 
