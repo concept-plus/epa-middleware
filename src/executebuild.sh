@@ -11,7 +11,7 @@ docker build -t conceptplus/epa-middleware .
 echo "----------------------------------"
 echo "Pushing Docker Image to Docker Hub"
 echo "----------------------------------"
-#docker push conceptplus/epa-middleware
+docker push conceptplus/epa-middleware
 
 echo "-----------------------------------------"
 echo "Stopping the Current Running Docker Image"
