@@ -28,5 +28,6 @@ _See the [Docker hub registry - Middleware Container](https://hub.docker.com/r/c
 
 From the project root directory run:
 
+    > cd src
     > npm install
     > node app.js
